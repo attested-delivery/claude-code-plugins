@@ -144,7 +144,11 @@ Enforcement instead lives at four points:
 
 1. **Catalog admission.** A plugin SHA enters `marketplace.json` only after its
    attestations verify in CI. The unit of trust is the admitted entry, gated at
-   merge.
+   merge. Automated re-pins from the central
+   [attested catalog-updater](https://github.com/attested-delivery/.github/tree/main/catalog-update)
+   — which fetches each external plugin's latest release, **verifies its
+   attestations fail-closed before proposing the bump**, and auto-merges only on
+   green — flow through this same admission gate.
 2. **SHA-pinned catalog.** External plugin sources are pinned to a 40-char `sha`
    (native), so the cataloged content is immutable — a moved tag cannot swap it.
 3. **Cosign-signed catalog.** The catalog blob itself is keyless-signed, so a
