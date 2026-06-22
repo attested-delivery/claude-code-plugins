@@ -86,7 +86,7 @@ jobs:
       contents: read
       security-events: write
     uses: >-
-      attested-delivery/.github/.github/workflows/reusable-shellcheck.yml@3065b8e45ce7a983d7c38e7abb94d5396d66a879
+      attested-delivery/.github/.github/workflows/reusable-shellcheck.yml@581a3a86fc1943d28bf2ac7f6c2e5ed83be09f32
 
   semgrep:
     permissions:
@@ -94,7 +94,7 @@ jobs:
       security-events: write
       actions: read
     uses: >-
-      attested-delivery/.github/.github/workflows/reusable-semgrep.yml@3065b8e45ce7a983d7c38e7abb94d5396d66a879
+      attested-delivery/.github/.github/workflows/reusable-semgrep.yml@581a3a86fc1943d28bf2ac7f6c2e5ed83be09f32
     with:
       directory: .
 
@@ -104,7 +104,7 @@ jobs:
       security-events: write
       actions: read
     uses: >-
-      attested-delivery/.github/.github/workflows/reusable-secrets.yml@3065b8e45ce7a983d7c38e7abb94d5396d66a879
+      attested-delivery/.github/.github/workflows/reusable-secrets.yml@581a3a86fc1943d28bf2ac7f6c2e5ed83be09f32
     with:
       directory: .
 
@@ -114,7 +114,7 @@ jobs:
       security-events: write
       actions: read
     uses: >-
-      attested-delivery/.github/.github/workflows/reusable-manifest-review.yml@3065b8e45ce7a983d7c38e7abb94d5396d66a879
+      attested-delivery/.github/.github/workflows/reusable-manifest-review.yml@581a3a86fc1943d28bf2ac7f6c2e5ed83be09f32
     with:
       directory: .
 

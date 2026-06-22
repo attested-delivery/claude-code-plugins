@@ -15,9 +15,6 @@ name: Release
 # Dry-run: workflow_dispatch exercises the full build → attest → verify chain;
 # publish is tag-gated and skipped.
 #
-# BOOTSTRAP: the plugin-gate reusables + reusable-cosign-sign pin the
-# attested-delivery/.github PR branch commit d4467d5 (#12) until that merges;
-# re-pin to the merged main SHA afterward.
 
 "on":
   push:
@@ -158,22 +155,22 @@ jobs:
     needs: [meta]
     permissions: { contents: read, security-events: write }
     uses: >-
-      attested-delivery/.github/.github/workflows/reusable-shellcheck.yml@3065b8e45ce7a983d7c38e7abb94d5396d66a879
+      attested-delivery/.github/.github/workflows/reusable-shellcheck.yml@581a3a86fc1943d28bf2ac7f6c2e5ed83be09f32
   gate-semgrep:
     needs: [meta]
     permissions: { contents: read, security-events: write, actions: read }
     uses: >-
-      attested-delivery/.github/.github/workflows/reusable-semgrep.yml@3065b8e45ce7a983d7c38e7abb94d5396d66a879
+      attested-delivery/.github/.github/workflows/reusable-semgrep.yml@581a3a86fc1943d28bf2ac7f6c2e5ed83be09f32
   gate-secrets:
     needs: [meta]
     permissions: { contents: read, security-events: write, actions: read }
     uses: >-
-      attested-delivery/.github/.github/workflows/reusable-secrets.yml@3065b8e45ce7a983d7c38e7abb94d5396d66a879
+      attested-delivery/.github/.github/workflows/reusable-secrets.yml@581a3a86fc1943d28bf2ac7f6c2e5ed83be09f32
   gate-manifest:
     needs: [meta]
     permissions: { contents: read, security-events: write, actions: read }
     uses: >-
-      attested-delivery/.github/.github/workflows/reusable-manifest-review.yml@3065b8e45ce7a983d7c38e7abb94d5396d66a879
+      attested-delivery/.github/.github/workflows/reusable-manifest-review.yml@581a3a86fc1943d28bf2ac7f6c2e5ed83be09f32
 
   # --- seam attestations: bind each verdict to the tarball digest -------------
   attest-sast:
@@ -259,7 +256,7 @@ jobs:
     needs: [meta]
     permissions: { id-token: write, contents: read }
     uses: >-
-      attested-delivery/.github/.github/workflows/reusable-cosign-sign.yml@3065b8e45ce7a983d7c38e7abb94d5396d66a879
+      attested-delivery/.github/.github/workflows/reusable-cosign-sign.yml@581a3a86fc1943d28bf2ac7f6c2e5ed83be09f32
     with:
       blob-path: .claude-plugin/marketplace.json
 
