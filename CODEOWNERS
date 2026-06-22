@@ -1,0 +1,13 @@
+# CODEOWNERS — owners requested for review on matching paths.
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owner for everything in the repo
+* @attested-delivery/maintainers
+
+# The catalog is the marketplace's trust root — every change is owner-reviewed.
+/.claude-plugin/ @attested-delivery/maintainers
+
+# Vendored plugins, supply-chain surface (workflows), and disposition.
+/plugins/ @attested-delivery/maintainers
+/.github/ @attested-delivery/maintainers
+/.vex/ @attested-delivery/maintainers

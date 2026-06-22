@@ -1,0 +1,10 @@
+{
+  "name": "attested-reference",
+  "description": "Reference plugin for the attested-delivery marketplace; exercises the attest/scan/verify pipeline end to end.",
+  "version": "0.1.0",
+  "author": { "name": "attested-delivery" },
+  "homepage": "https://github.com/attested-delivery/claude-code-plugins",
+  "repository": "https://github.com/attested-delivery/claude-code-plugins",
+  "license": "Apache-2.0",
+  "keywords": ["reference", "attested", "example"]
+}

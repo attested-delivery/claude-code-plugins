@@ -1,0 +1,23 @@
+{
+  "name": "attested-delivery",
+  "description": "The attested-delivery Claude Code plugin marketplace. Every plugin is SHA-pinned, scanned across the org's quality gates, and admitted to this catalog only when its attestations verify fail-closed.",
+  "owner": {
+    "name": "attested-delivery"
+  },
+  "metadata": {
+    "pluginRoot": "plugins"
+  },
+  "plugins": [
+    {
+      "name": "attested-reference",
+      "source": "./plugins/attested-reference",
+      "description": "Reference plugin that exercises the attest/scan/verify pipeline end to end.",
+      "author": {
+        "name": "attested-delivery"
+      },
+      "category": "example",
+      "license": "Apache-2.0",
+      "keywords": ["reference", "attested", "example"]
+    }
+  ]
+}

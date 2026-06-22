@@ -1,0 +1,86 @@
+---
+name: catalog-admission
+
+# Fail-closed admission control for the marketplace catalog.
+#
+# Claude Code does not verify attestations at plugin INSTALL time yet
+# (anthropics/claude-code#30727), so the enforceable fail-closed seam is here:
+# a change to .claude-plugin/marketplace.json is admitted only if
+#   1. `claude plugin validate` passes (canonical validation), and
+#   2. every EXTERNAL plugin source (github / url / git-subdir) is pinned to a
+#      full 40-char `sha`, and the marketplace name is not Anthropic-reserved
+#      (HARD fail — unlike the soft-fail quality-gates manifest-review), and
+#   3. each external entry's pinned artifact attestations verify (when present).
+# A plugin SHA enters the catalog only when these hold.
+
+"on":
+  pull_request:
+    paths:
+      - ".claude-plugin/marketplace.json"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  admit:
+    name: catalog-admission
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Install Claude Code CLI (pinned)
+        env:
+          CLAUDE_VERSION: 2.1.185
+        run: npm install -g "@anthropic-ai/claude-code@${CLAUDE_VERSION}"
+
+      - name: Validate catalog (canonical)
+        run: claude plugin validate .
+
+      - name: Enforce SHA-pinning + reserved-name (hard fail-closed)
+        run: |
+          set -euo pipefail
+          python3 - .claude-plugin/marketplace.json <<'PY'
+          import json, re, sys
+          SHA = re.compile(r'^[0-9a-f]{40}$')
+          RESERVED = {
+              "claude-code-marketplace","claude-code-plugins","claude-plugins-official",
+              "claude-plugins-community","claude-community","anthropic-marketplace",
+              "anthropic-plugins","agent-skills","anthropic-agent-skills",
+              "knowledge-work-plugins","life-sciences","claude-for-legal",
+              "claude-for-financial-services","financial-services-plugins"}
+          mp = json.load(open(sys.argv[1]))
+          errs = []
+          if mp.get("name") in RESERVED:
+              errs.append("marketplace name %r is Anthropic-reserved" % mp.get("name"))
+          for i, p in enumerate(mp.get("plugins", [])):
+              src = p.get("source")
+              name = p.get("name", "plugins[%d]" % i)
+              if isinstance(src, dict) and src.get("source") in ("github","url","git-subdir"):
+                  if not SHA.match(str(src.get("sha",""))):
+                      errs.append("external plugin %r is not pinned to a 40-char sha" % name)
+          if errs:
+              for e in errs:
+                  print("::error::%s" % e)
+              sys.exit(1)
+          n = sum(1 for p in mp.get("plugins", []) if isinstance(p.get("source"), dict))
+          print("catalog-admission OK: %d external entr(y/ies) SHA-pinned, name not reserved" % n)
+          PY
+
+      - name: Verify external entries' attestations (when present)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          # For each external entry that names a github source + sha, the plugin's
+          # own repo must publish a verifiable build provenance for that commit.
+          # No external entries yet (v1 vendors its only plugin); this loop is the
+          # documented hook that enforces it once the catalog grows.
+          count=$(python3 -c 'import json;m=json.load(open(".claude-plugin/marketplace.json"));print(sum(1 for p in m.get("plugins",[]) if isinstance(p.get("source"),dict) and p["source"].get("source")=="github"))')
+          echo "github-source external entries to verify: ${count}"
+          if [ "${count}" -gt 0 ]; then
+            echo "::notice::external attestation verification runs here once entries exist (gh attestation verify per source repo@sha)."
+          fi

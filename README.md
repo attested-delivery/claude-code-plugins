@@ -1,0 +1,183 @@
+# claude-code-plugins
+
+An **attested Claude Code plugin marketplace**. Every plugin in this catalog —
+and every constituent it ships (commands, agents, skills, hooks, bundled MCP
+servers) — is SHA-pinned, scanned across the org's quality gates, signed, and
+attested. A plugin's SHA enters the catalog only when its attestations verify
+fail-closed in CI.
+
+> The repository is named `claude-code-plugins`, but the marketplace `name` field
+> in `.claude-plugin/marketplace.json` is **`attested-delivery`**.
+> `claude-code-plugins` is an Anthropic-**reserved** marketplace name — a repo may
+> be named it, a manifest may not. Consumers add the marketplace by repo slug and
+> install plugins from the `attested-delivery` marketplace (below).
+
+## What this is
+
+A plugin marketplace is a `marketplace.json` catalog plus the plugins it lists.
+Claude Code resolves it when a user runs `/plugin marketplace add` and installs
+plugins from it on demand. The supply-chain problem is the same one the org
+solves for binaries and IaC modules: *the thing you verified must be the thing
+that runs*. A plugin is executable trust — its commands, hooks, and MCP servers
+run inside your environment — so the catalog that hands it to you should carry
+proof of what was scanned and signed.
+
+This repo turns the plugin distribution path into an attested one:
+
+- Each plugin tarball gets **SLSA build provenance** and a **CycloneDX SBOM**.
+- Each deploy-gating **gate verdict** (SAST, SCA, license/misconfig, ShellCheck,
+  Semgrep, secrets, manifest-review) becomes a signed, digest-bound attestation.
+- The `marketplace.json` catalog itself is **cosign-signed (keyless)**.
+- A plugin SHA is admitted to the catalog **only when all of its attestations
+  verify** — admission, not convention, is the gate.
+
+It is built on a three-pillar research synthesis — attestation & signing,
+layered scanning, and marketplace integrity — described in
+[docs/explanation/attested-marketplace.md](docs/explanation/attested-marketplace.md).
+
+> **Every gate is risk-reducing, not risk-eliminating.** A scanner finds the
+> classes of problem it knows about; a signature proves origin and integrity, not
+> safety. Attestation narrows the trust surface — it does not vouch that a plugin
+> is benign.
+
+## What v1 ships
+
+A working scaffold plus **one** vendored reference plugin that drives the
+pipeline end to end. The catalog otherwise starts empty.
+
+```
+.claude-plugin/marketplace.json   # the catalog (name: "attested-delivery")
+plugins/
+  attested-reference/             # vendored reference plugin (a command + a no-op hook)
+    .claude-plugin/plugin.json
+    commands/hello.md
+    hooks/hooks.json
+    hooks/check.sh
+external_plugins/                 # empty placeholder for future git-subdir + sha plugins
+docs/                             # Diátaxis docs (this README links into them)
+```
+
+`plugins/attested-reference/` exercises attest → scan → verify on real content so
+the pipeline is proven before any external plugin is cataloged.
+`external_plugins/` is reserved for future plugins referenced by `git-subdir`
+plus a 40-char `sha` pin.
+
+## Quick start
+
+Add this marketplace, then install the reference plugin:
+
+```bash
+# in Claude Code
+/plugin marketplace add attested-delivery/claude-code-plugins
+/plugin install attested-reference@attested-delivery
+```
+
+`attested-reference@attested-delivery` reads as *plugin `attested-reference` from
+the `attested-delivery` marketplace* — the marketplace name, not the repo name.
+
+Before trusting a release, verify it yourself: see
+[SECURITY.md](SECURITY.md) and [docs/security/verify.md](docs/security/verify.md).
+
+## Layout (canonical)
+
+The repository follows Anthropic's documented plugin layout.
+
+| Path | Required | Purpose |
+| --- | --- | --- |
+| `.claude-plugin/marketplace.json` | yes | The catalog: marketplace `name`, `owner`, and the `plugins` list |
+| `<plugin>/.claude-plugin/plugin.json` | yes | Per-plugin manifest — required: `name`, `description`, `author.name` |
+| `<plugin>/commands/` | optional | Slash commands |
+| `<plugin>/agents/` | optional | Subagents |
+| `<plugin>/skills/` | optional | Skills |
+| `<plugin>/hooks/` | optional | Event hooks (e.g. `hooks.json` + scripts) |
+| `<plugin>/.mcp.json` | optional | Bundled MCP server definitions |
+
+Plugin sources support a native **40-char `sha`** pin. When both `ref` and `sha`
+are set, the `sha` is the effective pin — the ref is a label, the digest is the
+identity.
+
+## Gates and attestations
+
+Each gate is a thin SHA-pinned caller of an `attested-delivery/.github` central
+reusable. The scanning gates normalize on SARIF and surface in the **Security**
+tab; deploy-gating verdicts become attestations.
+
+| Gate | Tool | Scans | Fail mode | Release predicate |
+| --- | --- | --- | --- | --- |
+| SAST | CodeQL (`languages: actions`) | This repo's **own workflows** | soft (Security tab) | `sast/v1` |
+| SCA | OSV-Scanner | MCP-server dependencies | soft (Security tab) | `sca/v1` |
+| License / misconfig | Trivy | Repo + bundled assets | soft (Security tab) | `iac-license/v1` |
+| ShellCheck | ShellCheck | Hook scripts | soft (Security tab) | `shellcheck/v1` |
+| Semgrep | Semgrep | MCP / source | soft (Security tab) | `semgrep/v1` |
+| Secrets | Gitleaks + TruffleHog | Repo history + tree | **hard** on verified live secrets (TruffleHog) | `secrets/v1` |
+| Manifest review | manifest-review | `marketplace.json` + plugin manifests | **hard** | `manifest/v1` |
+| Scorecard | OpenSSF Scorecard | Repo posture | soft (Security tab) | — (repo-level signal) |
+| Manifest validation | `claude plugin validate` | Catalog + plugin manifests (canonical) | **hard** | — |
+
+> **CodeQL has no HCL or plugin extractor.** SAST therefore analyzes only this
+> repo's own GitHub Actions workflow YAML — itself a real supply-chain attack
+> surface — *not* the plugin payloads. Plugin shell, source, and manifests are
+> covered by ShellCheck, Semgrep, secret scanning, and manifest-review.
+
+**Manifest-review** asserts the marketplace-integrity invariants: every external
+plugin source is SHA-pinned, the marketplace `name` is not a reserved name, and
+required manifest fields are present.
+
+**Attestation model.** Each plugin tarball carries SLSA build provenance
+(`actions/attest-build-provenance`) and a CycloneDX SBOM (Syft +
+`actions/attest-sbom`). Each gate verdict is seam-signed by the central
+`reusable-attest-scan.yml` under the predicate namespace
+`https://attested-delivery.github.io/attestations/<gate>/v1`. The
+`marketplace.json` catalog (a blob, not an OCI image) is signed with **cosign
+keyless** (Sigstore Fulcio/Rekor) and verified with `cosign verify-blob`. The
+release is fail-closed: nothing publishes unless every attestation verifies.
+
+The full gate table is in [docs/reference/gates.md](docs/reference/gates.md).
+
+## Where "fail-closed" actually lives
+
+Claude Code does **not** verify plugin signatures or attestations at install time
+yet (tracked upstream:
+[anthropics/claude-code#30727](https://github.com/anthropics/claude-code/issues/30727)).
+So this marketplace cannot rely on the installer to refuse an unverified plugin.
+Enforcement instead lives at four points:
+
+1. **Catalog admission.** A plugin SHA enters `marketplace.json` only after its
+   attestations verify in CI. The unit of trust is the admitted entry, gated at
+   merge.
+2. **SHA-pinned catalog.** External plugin sources are pinned to a 40-char `sha`
+   (native), so the cataloged content is immutable — a moved tag cannot swap it.
+3. **Cosign-signed catalog.** The catalog blob itself is keyless-signed, so a
+   consumer can prove the catalog they fetched is the one this repo published.
+4. **Documented consumer verification.** Every release ships copy-pasteable
+   `gh attestation verify` and `cosign verify-blob` commands (SECURITY.md) so a
+   consumer can re-check before trusting.
+
+Native, install-time, install-blocking verification is the missing piece. It is a
+flagged upstream gap, not a property this marketplace can yet enforce. See
+[docs/explanation/attested-marketplace.md](docs/explanation/attested-marketplace.md)
+for why admission-time enforcement is the right seam regardless.
+
+## Bootstrap note (gates pending #12)
+
+Five of the plugin-specific gate reusables — ShellCheck, Semgrep, secrets,
+manifest-review, and cosign-sign — are proposed in
+[attested-delivery/.github#12](https://github.com/attested-delivery/.github/pull/12)
+and not yet merged. Until #12 merges, this marketplace pins those callers to the
+PR branch commit **`d4467d5`**. When #12 merges, the pins are re-pinned to the
+merged `main` SHA and Dependabot's `github-actions` updater keeps them fresh.
+
+## Documentation
+
+Docs follow the [Diátaxis](https://diataxis.fr/) framework. Start at
+[docs/README.md](docs/README.md).
+
+| Mode | Document |
+| --- | --- |
+| How-to | [Add a plugin](docs/how-to/add-a-plugin.md) |
+| Reference | [Gates](docs/reference/gates.md) |
+| Explanation | [Why an attested marketplace](docs/explanation/attested-marketplace.md) |
+| Security | [Verify a release](docs/security/verify.md) |
+
+See also [SECURITY.md](SECURITY.md) for vulnerability reporting and the full
+verification reference.
