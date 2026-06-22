@@ -95,3 +95,20 @@ To move a plugin to a newer version, **re-pin its `sha`** to the new commit and
 let catalog admission re-verify the new digest's attestations. Never edit a
 plugin's content in place behind an unchanged SHA — a different content hash is a
 different artifact, and the old attestations do not describe it.
+
+### Automated re-pins (the attested catalog-updater)
+
+You normally don't re-pin external plugins by hand. The central, **verify-first**
+catalog-updater hub in
+[`attested-delivery/.github`](https://github.com/attested-delivery/.github/tree/main/catalog-update)
+does it for you: on a schedule it resolves each external entry's **latest
+release**, **verifies that release's attestations fail-closed**, and — only if
+every required predicate verifies — opens a re-pin PR whose body carries the full
+attestation evidence. The PR runs through `catalog-admission` (which re-verifies
+the same way) and **auto-merges once the gates are green**. A release whose
+attestations don't verify is never proposed.
+
+This catalog opts in by having the `attested-delivery-ci` App installed — there is
+no per-repo workflow to add. (Dependabot can't do this: no Dependabot ecosystem
+parses the `git-subdir` + `sha` catalog pins; its `github-actions` updater here
+only keeps the workflow `uses:` pins fresh.)
