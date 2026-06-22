@@ -12,9 +12,8 @@ name: quality-gates
 # the org-standard SAST(actions)/SCA(OSV)/Trivy/Scorecard. A marketplace-validate
 # job runs the canonical `claude plugin validate`.
 #
-# BOOTSTRAP: the five plugin-gate reusables are not yet merged upstream
-# (attested-delivery/.github#12). Their callers pin the PR branch commit
-# d4467d5; re-pin to the merged main SHA after #12 lands.
+# The five plugin-gate reusables are merged into attested-delivery/.github
+# (#12, cosign-signer fix #13) and pinned to that merged main SHA.
 
 "on":
   push:
@@ -80,7 +79,7 @@ jobs:
     with:
       publish-results: false
 
-  # --- plugin-constituent gates (NEW reusables @d4467d5 bootstrap) ------------
+  # --- plugin-constituent gates (NEW reusables, merged #12/#13) ---------------
   shellcheck:
     permissions:
       contents: read
