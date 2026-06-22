@@ -155,22 +155,22 @@ jobs:
     needs: [meta]
     permissions: { contents: read, security-events: write }
     uses: >-
-      attested-delivery/.github/.github/workflows/reusable-shellcheck.yml@581a3a86fc1943d28bf2ac7f6c2e5ed83be09f32
+      attested-delivery/.github/.github/workflows/reusable-shellcheck.yml@b26631596d8dcac18c6b92d436f676be5bf1d97c
   gate-semgrep:
     needs: [meta]
     permissions: { contents: read, security-events: write, actions: read }
     uses: >-
-      attested-delivery/.github/.github/workflows/reusable-semgrep.yml@581a3a86fc1943d28bf2ac7f6c2e5ed83be09f32
+      attested-delivery/.github/.github/workflows/reusable-semgrep.yml@b26631596d8dcac18c6b92d436f676be5bf1d97c
   gate-secrets:
     needs: [meta]
     permissions: { contents: read, security-events: write, actions: read }
     uses: >-
-      attested-delivery/.github/.github/workflows/reusable-secrets.yml@581a3a86fc1943d28bf2ac7f6c2e5ed83be09f32
+      attested-delivery/.github/.github/workflows/reusable-secrets.yml@b26631596d8dcac18c6b92d436f676be5bf1d97c
   gate-manifest:
     needs: [meta]
     permissions: { contents: read, security-events: write, actions: read }
     uses: >-
-      attested-delivery/.github/.github/workflows/reusable-manifest-review.yml@581a3a86fc1943d28bf2ac7f6c2e5ed83be09f32
+      attested-delivery/.github/.github/workflows/reusable-manifest-review.yml@b26631596d8dcac18c6b92d436f676be5bf1d97c
 
   # --- seam attestations: bind each verdict to the tarball digest -------------
   attest-sast:
@@ -256,7 +256,7 @@ jobs:
     needs: [meta]
     permissions: { id-token: write, contents: read }
     uses: >-
-      attested-delivery/.github/.github/workflows/reusable-cosign-sign.yml@581a3a86fc1943d28bf2ac7f6c2e5ed83be09f32
+      attested-delivery/.github/.github/workflows/reusable-cosign-sign.yml@b26631596d8dcac18c6b92d436f676be5bf1d97c
     with:
       blob-path: .claude-plugin/marketplace.json
 
@@ -303,6 +303,9 @@ jobs:
           OWNER: ${{ github.repository_owner }}
           SEAM: attested-delivery/.github/.github/workflows/reusable-attest-scan.yml
           VEX_SIGNER: attested-delivery/.github/.github/workflows/reusable-vex.yml
+          # The catalog's keyless signer is the cosign-sign reusable (not this repo);
+          # consume the identity it reported rather than hardcoding it here.
+          CATALOG_SIGNER_ID: ${{ needs.sign-catalog.outputs.certificate-identity }}
         run: |
           set -euo pipefail
           shopt -s nullglob
@@ -331,7 +334,7 @@ jobs:
           echo "=== Verifying catalog signature (cosign) ==="
           cosign verify-blob .claude-plugin/marketplace.json \
             --bundle catalog-sig/marketplace.json.cosign.bundle \
-            --certificate-identity-regexp "^https://github.com/${GITHUB_REPOSITORY}/" \
+            --certificate-identity-regexp "${CATALOG_SIGNER_ID}" \
             --certificate-oidc-issuer "https://token.actions.githubusercontent.com"
           echo "All attestations + catalog signature verified."
 

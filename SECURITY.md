@@ -98,13 +98,15 @@ detached bundle:
 ```bash
 cosign verify-blob .claude-plugin/marketplace.json \
   --bundle marketplace.json.cosign.bundle \
-  --certificate-identity-regexp '^https://github.com/attested-delivery/claude-code-plugins/' \
+  --certificate-identity-regexp '^https://github\.com/attested-delivery/\.github/\.github/workflows/reusable-cosign-sign\.yml@' \
   --certificate-oidc-issuer https://token.actions.githubusercontent.com
 ```
 
-The `--certificate-identity-regexp` pins the signing workflow to this repo, and
-`--certificate-oidc-issuer` pins the OIDC issuer to GitHub Actions. A signature
-that verifies under any other identity or issuer is not this catalog.
+The `--certificate-identity-regexp` pins the **signer workflow** — keyless signing
+binds the Fulcio certificate to the central `reusable-cosign-sign.yml` in
+`attested-delivery/.github` (the workflow that ran the signing job), not to this
+repo — and `--certificate-oidc-issuer` pins the OIDC issuer to GitHub Actions. A
+signature that verifies under any other identity or issuer is not this catalog.
 
 ---
 

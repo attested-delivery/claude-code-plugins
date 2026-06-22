@@ -80,12 +80,14 @@ you fetched against its detached bundle:
 ```bash
 cosign verify-blob .claude-plugin/marketplace.json \
   --bundle marketplace.json.cosign.bundle \
-  --certificate-identity-regexp '^https://github.com/attested-delivery/claude-code-plugins/' \
+  --certificate-identity-regexp '^https://github\.com/attested-delivery/\.github/\.github/workflows/reusable-cosign-sign\.yml@' \
   --certificate-oidc-issuer https://token.actions.githubusercontent.com
 ```
 
 The two `--certificate-*` flags are what make this meaningful:
-`--certificate-identity-regexp` pins the signer to a workflow in *this* repo, and
+`--certificate-identity-regexp` pins the **signer workflow** — keyless signing binds
+the cert to the central `reusable-cosign-sign.yml` in `attested-delivery/.github`
+that ran the signing job, not to this repo — and
 `--certificate-oidc-issuer` pins the issuer to GitHub Actions. A signature that
 only verifies under some other identity or issuer is not this catalog — treat it
 as an impersonation.
