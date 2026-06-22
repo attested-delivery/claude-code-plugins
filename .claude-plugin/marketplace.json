@@ -18,6 +18,22 @@
       "category": "example",
       "license": "Apache-2.0",
       "keywords": ["reference", "attested", "example"]
+    },
+    {
+      "name": "attested-delivery",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/attested-delivery/.github.git",
+        "path": ".github",
+        "ref": "main",
+        "sha": "b26631596d8dcac18c6b92d436f676be5bf1d97c"
+      },
+      "description": "Signed, SLSA-attested, fail-closed-verified releases — central reusable signing/seam/verify workflows and independent gh attestation verify.",
+      "author": {
+        "name": "attested-delivery"
+      },
+      "license": "Apache-2.0",
+      "keywords": ["slsa", "attestation", "supply-chain", "sigstore", "sbom", "ci-cd", "release-signing"]
     }
   ]
 }

@@ -50,11 +50,11 @@ a human-readable label.
   "description": "<one-line summary>",
   "author": { "name": "<author>" },
   "source": {
-    "source": "git-subdir",           // plugin lives in a subdirectory of a repo
-    "repo": "<owner>/<plugin-repo>",  // the external plugin's source repo
-    "subdir": "plugins/<plugin-name>",// path to the plugin within that repo
-    "ref": "v1.2.3",                  // human-readable label (mutable)
-    "sha": "<40-char-commit-sha>"     // EFFECTIVE PIN — immutable identity
+    "source": "git-subdir",                          // plugin lives in a subdirectory of a repo
+    "url": "https://github.com/<owner>/<repo>.git",  // the external plugin's source repo (full git URL)
+    "path": "plugins/<plugin-name>",                 // subdirectory holding the plugin's .claude-plugin/
+    "ref": "v1.2.3",                                 // human-readable label (mutable)
+    "sha": "<40-char-commit-sha>"                    // EFFECTIVE PIN — immutable identity
   },
   "license": "<SPDX-id>",
   "keywords": ["<...>"]
@@ -67,16 +67,21 @@ a human-readable label.
 
 ## 3. Open a PR — catalog admission runs fail-closed
 
-The pull request triggers the marketplace gates. Two are decisive for admission:
+The **catalog-admission** gate runs on every pull request (so it can be a hard
+required status check) and fails closed unless **all** of these hold:
 
-- **manifest-review** (`manifest/v1`) — fails closed unless every external plugin
-  source is SHA-pinned, the marketplace `name` is not a reserved name, and the
-  required manifest fields are present.
-- **catalog admission** — re-verifies the plugin's published attestations
-  (provenance, SBOM, gate verdicts) for the pinned SHA. If any attestation fails
-  to verify, admission fails and the entry cannot merge.
+- every external plugin source is pinned to a full 40-char `sha` — a `ref`
+  without a `sha` is mutable and rejected;
+- the pinned `sha` **actually resolves to a plugin**: admission fetches the
+  `.claude-plugin/plugin.json` at that commit and rejects the entry if it is not
+  there (this is what stops a pin from pointing at a commit that lacks the
+  plugin, or a placeholder SHA);
+- the marketplace `name` is not an Anthropic-reserved name;
+- `claude plugin validate` passes (canonical manifest check).
 
-`claude plugin validate` runs as the canonical manifest check alongside these.
+The soft-fail **manifest-review** (`manifest/v1`) gate reports the same SHA-pin
+findings to the Security tab. Make `catalog-admission` a **required** check in
+branch protection so the pin requirement is enforced at merge, not by convention.
 
 ## 4. Verify, then merge
 
