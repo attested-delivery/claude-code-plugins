@@ -158,22 +158,22 @@ jobs:
     needs: [meta]
     permissions: { contents: read, security-events: write }
     uses: >-
-      attested-delivery/.github/.github/workflows/reusable-shellcheck.yml@d4467d53ee8a95802e0b620ac83c07630aa4715d
+      attested-delivery/.github/.github/workflows/reusable-shellcheck.yml@3065b8e45ce7a983d7c38e7abb94d5396d66a879
   gate-semgrep:
     needs: [meta]
     permissions: { contents: read, security-events: write, actions: read }
     uses: >-
-      attested-delivery/.github/.github/workflows/reusable-semgrep.yml@d4467d53ee8a95802e0b620ac83c07630aa4715d
+      attested-delivery/.github/.github/workflows/reusable-semgrep.yml@3065b8e45ce7a983d7c38e7abb94d5396d66a879
   gate-secrets:
     needs: [meta]
     permissions: { contents: read, security-events: write, actions: read }
     uses: >-
-      attested-delivery/.github/.github/workflows/reusable-secrets.yml@d4467d53ee8a95802e0b620ac83c07630aa4715d
+      attested-delivery/.github/.github/workflows/reusable-secrets.yml@3065b8e45ce7a983d7c38e7abb94d5396d66a879
   gate-manifest:
     needs: [meta]
     permissions: { contents: read, security-events: write, actions: read }
     uses: >-
-      attested-delivery/.github/.github/workflows/reusable-manifest-review.yml@d4467d53ee8a95802e0b620ac83c07630aa4715d
+      attested-delivery/.github/.github/workflows/reusable-manifest-review.yml@3065b8e45ce7a983d7c38e7abb94d5396d66a879
 
   # --- seam attestations: bind each verdict to the tarball digest -------------
   attest-sast:
@@ -259,7 +259,7 @@ jobs:
     needs: [meta]
     permissions: { id-token: write, contents: read }
     uses: >-
-      attested-delivery/.github/.github/workflows/reusable-cosign-sign.yml@d4467d53ee8a95802e0b620ac83c07630aa4715d
+      attested-delivery/.github/.github/workflows/reusable-cosign-sign.yml@3065b8e45ce7a983d7c38e7abb94d5396d66a879
     with:
       blob-path: .claude-plugin/marketplace.json
 
