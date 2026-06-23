@@ -75,10 +75,8 @@ jobs:
       # with the central catalog-updater hub so "what must verify for an external
       # entry" lives in one place. No external entries yet (v1 vendors its only
       # plugin), so this is a clean no-op until the catalog grows.
-      # Pinned to attested-delivery/.github PR #16's branch commit; re-pin to the
-      # merged main SHA when #16 merges (cf. the bootstrap note in README.md).
       - name: Verify external entries' attestations (shared, fail-closed)
-        uses: attested-delivery/.github/.github/actions/plugin-catalog-update@21ac2e25a3a92a37e4225351c389d39868b77959 # .github#16
+        uses: attested-delivery/.github/.github/actions/plugin-catalog-update@b74df46cd6e64777bd557a41c6f75a933cbc9617 # .github main
         with:
           mode: verify
           repo: ${{ github.repository }}
