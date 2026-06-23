@@ -25,8 +25,8 @@
         "source": "git-subdir",
         "url": "https://github.com/attested-delivery/.github.git",
         "path": ".github",
-        "ref": "v0.1.0",
-        "sha": "f211de97395ced798da52e28d89d79c22b3020ee"
+        "ref": "v0.1.1",
+        "sha": "36cdbd7d75865b88e8beec4813c1d3587fa98644"
       },
       "description": "Signed, SLSA-attested, fail-closed-verified releases — central reusable signing/seam/verify workflows and independent gh attestation verify.",
       "author": {
