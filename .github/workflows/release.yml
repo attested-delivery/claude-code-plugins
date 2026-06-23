@@ -137,47 +137,47 @@ jobs:
     needs: [meta]
     permissions: { security-events: write, contents: read, actions: read, packages: read }
     uses: >-
-      attested-delivery/.github/.github/workflows/reusable-sast-codeql.yml@698148e12da113cfeeef8742c31ae93657959e67
+      attested-delivery/.github/.github/workflows/reusable-sast-codeql.yml@f211de97395ced798da52e28d89d79c22b3020ee # v0.1.0
     with: { languages: actions, build-mode: none }
   gate-sca:
     needs: [meta]
     permissions: { actions: read, contents: read, security-events: write, pull-requests: write }
     uses: >-
-      attested-delivery/.github/.github/workflows/reusable-sca-osv.yml@698148e12da113cfeeef8742c31ae93657959e67
+      attested-delivery/.github/.github/workflows/reusable-sca-osv.yml@f211de97395ced798da52e28d89d79c22b3020ee # v0.1.0
     with: { fail-on-severity: high }
   gate-trivy:
     needs: [meta]
     permissions: { contents: read, security-events: write, actions: read, packages: read }
     uses: >-
-      attested-delivery/.github/.github/workflows/reusable-trivy.yml@698148e12da113cfeeef8742c31ae93657959e67
+      attested-delivery/.github/.github/workflows/reusable-trivy.yml@f211de97395ced798da52e28d89d79c22b3020ee # v0.1.0
     with: { scan-iac: true }
   gate-shellcheck:
     needs: [meta]
     permissions: { contents: read, security-events: write }
     uses: >-
-      attested-delivery/.github/.github/workflows/reusable-shellcheck.yml@b26631596d8dcac18c6b92d436f676be5bf1d97c
+      attested-delivery/.github/.github/workflows/reusable-shellcheck.yml@f211de97395ced798da52e28d89d79c22b3020ee # v0.1.0
   gate-semgrep:
     needs: [meta]
     permissions: { contents: read, security-events: write, actions: read }
     uses: >-
-      attested-delivery/.github/.github/workflows/reusable-semgrep.yml@b26631596d8dcac18c6b92d436f676be5bf1d97c
+      attested-delivery/.github/.github/workflows/reusable-semgrep.yml@f211de97395ced798da52e28d89d79c22b3020ee # v0.1.0
   gate-secrets:
     needs: [meta]
     permissions: { contents: read, security-events: write, actions: read }
     uses: >-
-      attested-delivery/.github/.github/workflows/reusable-secrets.yml@b26631596d8dcac18c6b92d436f676be5bf1d97c
+      attested-delivery/.github/.github/workflows/reusable-secrets.yml@f211de97395ced798da52e28d89d79c22b3020ee # v0.1.0
   gate-manifest:
     needs: [meta]
     permissions: { contents: read, security-events: write, actions: read }
     uses: >-
-      attested-delivery/.github/.github/workflows/reusable-manifest-review.yml@b26631596d8dcac18c6b92d436f676be5bf1d97c
+      attested-delivery/.github/.github/workflows/reusable-manifest-review.yml@f211de97395ced798da52e28d89d79c22b3020ee # v0.1.0
 
   # --- seam attestations: bind each verdict to the tarball digest -------------
   attest-sast:
     needs: [meta, build, gate-sast]
     permissions: { id-token: write, attestations: write, contents: read }
     uses: >-
-      attested-delivery/.github/.github/workflows/reusable-attest-scan.yml@698148e12da113cfeeef8742c31ae93657959e67
+      attested-delivery/.github/.github/workflows/reusable-attest-scan.yml@f211de97395ced798da52e28d89d79c22b3020ee # v0.1.0
     with:
       subject-name: ${{ needs.build.outputs.subject-name }}
       subject-digest: ${{ needs.build.outputs.subject-digest }}
@@ -188,7 +188,7 @@ jobs:
     needs: [meta, build, gate-sca]
     permissions: { id-token: write, attestations: write, contents: read }
     uses: >-
-      attested-delivery/.github/.github/workflows/reusable-attest-scan.yml@698148e12da113cfeeef8742c31ae93657959e67
+      attested-delivery/.github/.github/workflows/reusable-attest-scan.yml@f211de97395ced798da52e28d89d79c22b3020ee # v0.1.0
     with:
       subject-name: ${{ needs.build.outputs.subject-name }}
       subject-digest: ${{ needs.build.outputs.subject-digest }}
@@ -199,7 +199,7 @@ jobs:
     needs: [meta, build, gate-trivy]
     permissions: { id-token: write, attestations: write, contents: read }
     uses: >-
-      attested-delivery/.github/.github/workflows/reusable-attest-scan.yml@698148e12da113cfeeef8742c31ae93657959e67
+      attested-delivery/.github/.github/workflows/reusable-attest-scan.yml@f211de97395ced798da52e28d89d79c22b3020ee # v0.1.0
     with:
       subject-name: ${{ needs.build.outputs.subject-name }}
       subject-digest: ${{ needs.build.outputs.subject-digest }}
@@ -210,7 +210,7 @@ jobs:
     needs: [meta, build, gate-shellcheck]
     permissions: { id-token: write, attestations: write, contents: read }
     uses: >-
-      attested-delivery/.github/.github/workflows/reusable-attest-scan.yml@698148e12da113cfeeef8742c31ae93657959e67
+      attested-delivery/.github/.github/workflows/reusable-attest-scan.yml@f211de97395ced798da52e28d89d79c22b3020ee # v0.1.0
     with:
       subject-name: ${{ needs.build.outputs.subject-name }}
       subject-digest: ${{ needs.build.outputs.subject-digest }}
@@ -221,7 +221,7 @@ jobs:
     needs: [meta, build, gate-semgrep]
     permissions: { id-token: write, attestations: write, contents: read }
     uses: >-
-      attested-delivery/.github/.github/workflows/reusable-attest-scan.yml@698148e12da113cfeeef8742c31ae93657959e67
+      attested-delivery/.github/.github/workflows/reusable-attest-scan.yml@f211de97395ced798da52e28d89d79c22b3020ee # v0.1.0
     with:
       subject-name: ${{ needs.build.outputs.subject-name }}
       subject-digest: ${{ needs.build.outputs.subject-digest }}
@@ -232,7 +232,7 @@ jobs:
     needs: [meta, build, gate-secrets]
     permissions: { id-token: write, attestations: write, contents: read }
     uses: >-
-      attested-delivery/.github/.github/workflows/reusable-attest-scan.yml@698148e12da113cfeeef8742c31ae93657959e67
+      attested-delivery/.github/.github/workflows/reusable-attest-scan.yml@f211de97395ced798da52e28d89d79c22b3020ee # v0.1.0
     with:
       subject-name: ${{ needs.build.outputs.subject-name }}
       subject-digest: ${{ needs.build.outputs.subject-digest }}
@@ -243,7 +243,7 @@ jobs:
     needs: [meta, build, gate-manifest]
     permissions: { id-token: write, attestations: write, contents: read }
     uses: >-
-      attested-delivery/.github/.github/workflows/reusable-attest-scan.yml@698148e12da113cfeeef8742c31ae93657959e67
+      attested-delivery/.github/.github/workflows/reusable-attest-scan.yml@f211de97395ced798da52e28d89d79c22b3020ee # v0.1.0
     with:
       subject-name: ${{ needs.build.outputs.subject-name }}
       subject-digest: ${{ needs.build.outputs.subject-digest }}
@@ -256,7 +256,7 @@ jobs:
     needs: [meta]
     permissions: { id-token: write, contents: read }
     uses: >-
-      attested-delivery/.github/.github/workflows/reusable-cosign-sign.yml@b26631596d8dcac18c6b92d436f676be5bf1d97c
+      attested-delivery/.github/.github/workflows/reusable-cosign-sign.yml@f211de97395ced798da52e28d89d79c22b3020ee # v0.1.0
     with:
       blob-path: .claude-plugin/marketplace.json
 
@@ -265,7 +265,7 @@ jobs:
     needs: [meta, build]
     permissions: { id-token: write, attestations: write, contents: read }
     uses: >-
-      attested-delivery/.github/.github/workflows/reusable-vex.yml@698148e12da113cfeeef8742c31ae93657959e67
+      attested-delivery/.github/.github/workflows/reusable-vex.yml@f211de97395ced798da52e28d89d79c22b3020ee # v0.1.0
     with:
       subject-name: ${{ needs.build.outputs.subject-name }}
       subject-digest: ${{ needs.build.outputs.subject-digest }}

@@ -76,7 +76,7 @@ jobs:
       # entry" lives in one place. No external entries yet (v1 vendors its only
       # plugin), so this is a clean no-op until the catalog grows.
       - name: Verify external entries' attestations (shared, fail-closed)
-        uses: attested-delivery/.github/.github/actions/plugin-catalog-update@b74df46cd6e64777bd557a41c6f75a933cbc9617 # .github main
+        uses: attested-delivery/.github/.github/actions/plugin-catalog-update@f211de97395ced798da52e28d89d79c22b3020ee # v0.1.0
         with:
           mode: verify
           repo: ${{ github.repository }}
