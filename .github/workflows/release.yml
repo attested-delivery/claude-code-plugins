@@ -132,7 +132,7 @@ jobs:
           path: ${{ needs.meta.outputs.name }}-${{ needs.meta.outputs.version }}-sbom.cdx.json
           if-no-files-found: error
 
-  # --- gate jobs (existing @698148e + new @d4467d5 bootstrap) -----------------
+  # --- gate jobs (central attested-delivery/.github reusables, SHA-pinned) ----
   gate-sast:
     needs: [meta]
     permissions: { security-events: write, contents: read, actions: read, packages: read }
