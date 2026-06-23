@@ -98,7 +98,12 @@ jobs:
               if s.get("source") == "github":
                   slug = s.get("repo", "").strip("/"); path = s.get("path", "").strip("/")
               else:  # git-subdir / url — accept repo+subdir (canonical) or url+path
-                  slug = (s.get("repo") or s.get("url", "").removeprefix("https://github.com/").removesuffix(".git")).strip("/")
+                  raw = (s.get("repo") or s.get("url", "")).strip().rstrip("/")
+                  for pre in ("https://github.com/", "git@github.com:", "ssh://git@github.com/"):
+                      if raw.startswith(pre):
+                          raw = raw[len(pre):]
+                          break
+                  slug = raw.removesuffix(".git").strip("/")  # non-github -> invalid slug -> fail-closed
                   path = (s.get("subdir") or s.get("path") or "").strip("/")
               man = (path + "/" if path else "") + ".claude-plugin/plugin.json"
               print("%s	%s	%s	%s" % (name, slug, man, sha))

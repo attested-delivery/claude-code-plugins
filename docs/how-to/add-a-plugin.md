@@ -77,7 +77,9 @@ required status check) and fails closed unless **all** of these hold:
   there (this is what stops a pin from pointing at a commit that lacks the
   plugin, or a placeholder SHA);
 - the marketplace `name` is not an Anthropic-reserved name;
-- `claude plugin validate` passes (canonical manifest check).
+- `claude plugin validate` passes (canonical manifest check);
+- each external entry's pinned release **attestations verify fail-closed** (SLSA
+  provenance), using the same verify the central catalog-updater runs.
 
 The soft-fail **manifest-review** (`manifest/v1`) gate reports the same SHA-pin
 findings to the Security tab. Make `catalog-admission` a **required** check in
