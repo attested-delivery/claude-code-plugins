@@ -23,8 +23,8 @@
       "name": "attested-delivery",
       "source": {
         "source": "git-subdir",
-        "url": "https://github.com/attested-delivery/.github.git",
-        "path": ".github",
+        "repo": "attested-delivery/.github",
+        "subdir": ".github",
         "ref": "v0.1.0",
         "sha": "f211de97395ced798da52e28d89d79c22b3020ee"
       },
