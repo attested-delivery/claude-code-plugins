@@ -97,7 +97,7 @@ jobs:
               sha = s.get("sha", ""); name = p.get("name", "")
               if s.get("source") == "github":
                   slug = s.get("repo", "").strip("/"); path = s.get("path", "").strip("/")
-              else:  # git-subdir / url — accept repo+subdir (canonical) or url+path
+              else:  # git-subdir / url — accept url+path (claude-canonical) or repo+subdir (legacy)
                   raw = (s.get("repo") or s.get("url", "")).strip().rstrip("/")
                   for pre in ("https://github.com/", "git@github.com:", "ssh://git@github.com/"):
                       if raw.startswith(pre):
