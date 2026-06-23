@@ -162,14 +162,12 @@ flagged upstream gap, not a property this marketplace can yet enforce. See
 [docs/explanation/attested-marketplace.md](docs/explanation/attested-marketplace.md)
 for why admission-time enforcement is the right seam regardless.
 
-## Bootstrap note (gates pending #12)
+## Central gate pins
 
-Five of the plugin-specific gate reusables — ShellCheck, Semgrep, secrets,
-manifest-review, and cosign-sign — are proposed in
-[attested-delivery/.github#12](https://github.com/attested-delivery/.github/pull/12)
-and not yet merged. Until #12 merges, this marketplace pins those callers to the
-PR branch commit **`d4467d5`**. When #12 merges, the pins are re-pinned to the
-merged `main` SHA and Dependabot's `github-actions` updater keeps them fresh.
+Every gate is a thin caller of the central
+[`attested-delivery/.github`](https://github.com/attested-delivery/.github)
+reusables, pinned to a released commit SHA and kept fresh by Dependabot's
+`github-actions` updater.
 
 ## Documentation
 
