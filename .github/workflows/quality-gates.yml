@@ -40,7 +40,7 @@ jobs:
       actions: read
       packages: read
     uses: >-
-      attested-delivery/.github/.github/workflows/reusable-sast-codeql.yml@698148e12da113cfeeef8742c31ae93657959e67
+      attested-delivery/.github/.github/workflows/reusable-sast-codeql.yml@f211de97395ced798da52e28d89d79c22b3020ee # v0.1.0
     with:
       languages: actions
       build-mode: none
@@ -52,7 +52,7 @@ jobs:
       security-events: write
       pull-requests: write
     uses: >-
-      attested-delivery/.github/.github/workflows/reusable-sca-osv.yml@698148e12da113cfeeef8742c31ae93657959e67
+      attested-delivery/.github/.github/workflows/reusable-sca-osv.yml@f211de97395ced798da52e28d89d79c22b3020ee # v0.1.0
     with:
       fail-on-severity: high
 
@@ -63,7 +63,7 @@ jobs:
       actions: read
       packages: read
     uses: >-
-      attested-delivery/.github/.github/workflows/reusable-trivy.yml@698148e12da113cfeeef8742c31ae93657959e67
+      attested-delivery/.github/.github/workflows/reusable-trivy.yml@f211de97395ced798da52e28d89d79c22b3020ee # v0.1.0
     with:
       scan-iac: true
 
@@ -75,7 +75,7 @@ jobs:
       contents: read
       actions: read
     uses: >-
-      attested-delivery/.github/.github/workflows/reusable-scorecard.yml@698148e12da113cfeeef8742c31ae93657959e67
+      attested-delivery/.github/.github/workflows/reusable-scorecard.yml@f211de97395ced798da52e28d89d79c22b3020ee # v0.1.0
     with:
       publish-results: false
 
@@ -85,7 +85,7 @@ jobs:
       contents: read
       security-events: write
     uses: >-
-      attested-delivery/.github/.github/workflows/reusable-shellcheck.yml@b26631596d8dcac18c6b92d436f676be5bf1d97c
+      attested-delivery/.github/.github/workflows/reusable-shellcheck.yml@f211de97395ced798da52e28d89d79c22b3020ee # v0.1.0
 
   semgrep:
     permissions:
@@ -93,7 +93,7 @@ jobs:
       security-events: write
       actions: read
     uses: >-
-      attested-delivery/.github/.github/workflows/reusable-semgrep.yml@b26631596d8dcac18c6b92d436f676be5bf1d97c
+      attested-delivery/.github/.github/workflows/reusable-semgrep.yml@f211de97395ced798da52e28d89d79c22b3020ee # v0.1.0
     with:
       directory: .
 
@@ -103,7 +103,7 @@ jobs:
       security-events: write
       actions: read
     uses: >-
-      attested-delivery/.github/.github/workflows/reusable-secrets.yml@b26631596d8dcac18c6b92d436f676be5bf1d97c
+      attested-delivery/.github/.github/workflows/reusable-secrets.yml@f211de97395ced798da52e28d89d79c22b3020ee # v0.1.0
     with:
       directory: .
 
@@ -113,7 +113,7 @@ jobs:
       security-events: write
       actions: read
     uses: >-
-      attested-delivery/.github/.github/workflows/reusable-manifest-review.yml@b26631596d8dcac18c6b92d436f676be5bf1d97c
+      attested-delivery/.github/.github/workflows/reusable-manifest-review.yml@f211de97395ced798da52e28d89d79c22b3020ee # v0.1.0
     with:
       directory: .
 
