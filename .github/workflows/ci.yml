@@ -26,11 +26,11 @@ jobs:
     permissions:
       contents: read
     uses: >-
-      attested-delivery/.github/.github/workflows/pin-check.yml@f211de97395ced798da52e28d89d79c22b3020ee
+      attested-delivery/.github/.github/workflows/pin-check.yml@508aa7a385d3f6776feb175e40b3a0e9f08402c4
   # Centralized, verified actionlint fetch.
   # attested-delivery/.github @ b314c29 (#6 — in-step PATH fix)
   validate-workflows:
     permissions:
       contents: read
     uses: >-
-      attested-delivery/.github/.github/workflows/reusable-actionlint.yml@f211de97395ced798da52e28d89d79c22b3020ee
+      attested-delivery/.github/.github/workflows/reusable-actionlint.yml@508aa7a385d3f6776feb175e40b3a0e9f08402c4
